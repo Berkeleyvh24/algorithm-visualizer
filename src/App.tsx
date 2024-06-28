@@ -20,8 +20,6 @@ function generateRandomArray(size: number): number[] {
 function App() {
   const [randomArray, setRandomArray] = useState<number[]>(generateRandomArray(arraySize));
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
-  const numberRefs = useRef<(HTMLDivElement | null)[]>([]);
-
 
   const generateNewArray = () => {
     setRandomArray(generateRandomArray(arraySize));
@@ -41,6 +39,7 @@ function App() {
         }
         setHighlightedIndex(currentIndex);
         currentIndex++;
+        setHighlightedIndex(currentIndex);
 
       }else{
         if(n > randomArray.length){
@@ -62,7 +61,7 @@ function App() {
     <>
       <div className="container">
       {randomArray.map((num, index) => (
-          <div style={{ height: `${num}px`}} ref={el => numberRefs.current[index] = el}  className={`bar ${index === highlightedIndex ? 'highlighted' : ''}`} key={index}></div>
+          <div style={{ height: `${num}px`}}  className={`bar ${index === highlightedIndex ? 'highlighted' : ''}`} key={index}></div>
         ))}
       </div>
       <button title="new-array" onClick={generateNewArray}>Generate new array</button>
