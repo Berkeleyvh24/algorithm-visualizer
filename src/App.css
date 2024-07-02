@@ -2,11 +2,16 @@
     position: absolute;
     top: 100px;
     left: 100px;
+    display: flex;
+}
+
+.sub-container{
+    margin: 0 10px;
 }
 
 .bar{
-    width: 2px;
-    background-color: teal;
+    width: 10px;
+    background-color: blue;
     display: inline-block;
     margin: 0 1px;
 }
