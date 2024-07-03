@@ -5,17 +5,16 @@
     display: flex;
 }
 
-.sub-container{
-    margin: 0 10px;
-}
-
 .bar{
     width: 10px;
     background-color: blue;
     display: inline-block;
     margin: 0 1px;
 }
-  
-.bar.highlighted {
-    background-color: red; /* Highlighted color */
+
+.barc{
+    width: 10px;
+    background-color: green;
+    display: inline-block;
+    margin: 0 1px;
 }
