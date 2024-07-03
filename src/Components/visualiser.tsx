@@ -14,7 +14,9 @@ import pause from '../helper/pause';
 const Visualiser = () => {
     const [size, setSize] = useState<number>(20);
     const [list, setList] = useState<ListComponents[]>(generateRandomArray(size));
-    let running = false
+    const [running, setRunning] = useState<boolean>(false)
+    // let running = false;
+    const [value, setValue] = useState<number|null>(null)
   
     const generateNewArray = () => {
       if(!running){
@@ -22,19 +24,39 @@ const Visualiser = () => {
       }
     };
 
-    const start = async(value: number) => {
-      startRun(true)
-      const motions = await callAlgorithm(value)
-      console.log(motions)
-      await visualizeMotions(motions);
-      startRun(false)
+    const start = async(value:number) => {
+      setRunning(true)
+      setValue(value);
+      console.log('-------')
     }
-    
-    const callAlgorithm = async(value: number) => {
-      console.log('-----')
-      if(!running){
+
+    useEffect(() => {
+      console.log(value, running)
+      if (!running) {
+        console.log('false')
         return;
       }
+
+      const runAlgorithm = async () => {
+        try {
+          const motions = await callAlgorithm(value)
+          console.log(running, '000000')
+          await visualizeMotions(motions) 
+          setRunning(false)
+        } catch (error) {
+          console.error('Error running algorithm:', error);
+        }
+      };
+
+      runAlgorithm()
+    }, [value]); 
+    
+    const callAlgorithm = async(value: number) => {
+      if(!running){
+        console.log('+++++----')
+        return;
+      }
+      
       const numberedList = getListCopy(list) 
       switch (value) {
         case 0:
@@ -42,12 +64,12 @@ const Visualiser = () => {
         case 1:
             return await SelectionSort(numberedList)
             // Additional logic for case 1
-            break;
       }
     }
 
-    const visualizeMotions = async(motions: ((number | string)[])[] | void) => {
+    const visualizeMotions = async(motions: (string | number)[][] | undefined) => {
       if(!running){
+        console.log('------++++++')
         return;
       }
       if(motions!.length === 0) {
@@ -62,7 +84,7 @@ const Visualiser = () => {
       }
   };
 
-  const visualizeMotionBySwapping = async(Motion: ((number | string)[])[] | void) => {
+  const visualizeMotionBySwapping = async(Motion: (string | number)[][] | undefined) => {
     while(Motion!.length > 0) {
         const currMove = Motion![0];
         // if container doesn't contains 3 elements then return
@@ -70,7 +92,7 @@ const Visualiser = () => {
             return;
         }
         else {
-            const indexes: (string |number)[] = [currMove[0], currMove[1]];
+            const indexes: (string | number)[] = [currMove[0], currMove[1]];
             await updateElementClass(indexes, 'barc');
             if(currMove[2] === 'swap') {
                 await updateList(indexes);
@@ -82,7 +104,7 @@ const Visualiser = () => {
     }
   };
 
-  const updateList = async(indexes:(string |number)[]) => {
+  const updateList = async(indexes:(string | number)[]) => {
       const array = [...list];
       const stored = array[indexes[0]].height;
       array[indexes[0]].height = array[indexes[1]].height;
@@ -90,7 +112,7 @@ const Visualiser = () => {
       await updateStateChanges(array);
   };
 
-  const updateElementClass = async(indexes:(string |number)[], classType:string) => {
+  const updateElementClass = async(indexes:(string | number)[], classType:string) => {
       const array = [...list];
       for(let i = 0 ; i < indexes.length ; ++i) {
           array[indexes[i]].cssClass = classType;
@@ -102,16 +124,10 @@ const Visualiser = () => {
     setList(() => {
       return [...newList];
     });
-    await pause(1);
+    await pause(10);
 
   };
-    
-    const startRun = (value: boolean) => {
-      running = value;
-    }
-
-    useEffect(() => {
-  }, []);
+  
   
   //${highlightedIndex.includes(index) ? 'highlighted' : ''}
     return (
@@ -120,8 +136,8 @@ const Visualiser = () => {
             <ListDisplay list={list}/>
         </div>
         <button title="new-array" onClick={generateNewArray}>Generate new array</button>
-        <button title="bubbleSort" onClick={() => start(0)}>Bubble Sort</button>
-        <button title="selectionSort" onClick={() => start(1)}>Selection Sort</button>
+        <button title="bubbleSort" onClick={() => start(0)} disabled={running}>Bubble Sort</button>
+        <button title="selectionSort" onClick={() => start(1)}disabled={running}>Selection Sort</button>
       </>
     )
 }
